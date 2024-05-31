@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.product.productproj.mapper.ItemDao">
+  <resultMap id="BaseResultMap" type="com.product.productproj.ItemDO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="item_id" jdbcType="VARCHAR" property="itemId" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="brand" jdbcType="VARCHAR" property="brand" />
+    <result column="level_1_cat_name" jdbcType="VARCHAR" property="level1CatName" />
+    <result column="level_2_cat_name" jdbcType="VARCHAR" property="level2CatName" />
+    <result column="level_3_cat_name" jdbcType="VARCHAR" property="level3CatName" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="sku_id" jdbcType="VARCHAR" property="skuId" />
+    <result column="attr_name_1" jdbcType="VARCHAR" property="attrName1" />
+    <result column="attr_value_1" jdbcType="VARCHAR" property="attrValue1" />
+    <result column="attr_name_2" jdbcType="VARCHAR" property="attrName2" />
+    <result column="attr_value_2" jdbcType="VARCHAR" property="attrValue2" />
+    <result column="attr_name_3" jdbcType="VARCHAR" property="attrName3" />
+    <result column="attr_value_3" jdbcType="VARCHAR" property="attrValue3" />
+    <result column="sale_price" jdbcType="DECIMAL" property="salePrice" />
+    <result column="min_price" jdbcType="DECIMAL" property="minPrice" />
+    <result column="stock_num" jdbcType="INTEGER" property="stockNum" />
+    <result column="edit_time" jdbcType="VARCHAR" property="editTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, item_id, `status`, brand, level_1_cat_name, level_2_cat_name, level_3_cat_name, 
+    title, sku_id, attr_name_1, attr_value_1, attr_name_2, attr_value_2, attr_name_3, 
+    attr_value_3, sale_price, stock_num, edit_time
+  </sql>
+
+
+  <select id="list" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select distinct a.item_id,a.title,a.brand,a.status,
+    level_1_cat_name,level_2_cat_name,level_3_cat_name,
+    b.min_price from item a
+    left join (select item_id,min(sale_price) min_price from item where item_id in
+    <foreach collection="itemIds" open="(" separator="," close=")" index="index" item="item">
+      #{item}
+    </foreach>
+    GROUP BY item_id) b
+    on a.item_id=b.item_id where a.item_id in
+    <foreach collection="itemIds" open="(" separator="," close=")" index="index" item="item">
+      #{item}
+    </foreach>
+  </select>
+
+  <select id="attrList" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select item_id,sku_id,sale_price,stock_num,
+    attr_name_1,attr_value_1,attr_name_2,attr_value_2,attr_name_3,attr_value_3
+    from item
+    where item_id in
+    <foreach collection="itemIds" open="(" separator="," close=")" index="index" item="item">
+      #{item}
+    </foreach>
+  </select>
+
+
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from item
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from item
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.product.productproj.ItemDO" useGeneratedKeys="true">
+    insert into item (item_id, `status`, brand, 
+      level_1_cat_name, level_2_cat_name, level_3_cat_name, 
+      title, sku_id, attr_name_1, 
+      attr_value_1, attr_name_2, attr_value_2, 
+      attr_name_3, attr_value_3, sale_price, 
+      stock_num, edit_time)
+    values (#{itemId,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, #{brand,jdbcType=VARCHAR}, 
+      #{level1CatName,jdbcType=VARCHAR}, #{level2CatName,jdbcType=VARCHAR}, #{level3CatName,jdbcType=VARCHAR}, 
+      #{title,jdbcType=VARCHAR}, #{skuId,jdbcType=INTEGER}, #{attrName1,jdbcType=VARCHAR}, 
+      #{attrValue1,jdbcType=VARCHAR}, #{attrName2,jdbcType=VARCHAR}, #{attrValue2,jdbcType=VARCHAR}, 
+      #{attrName3,jdbcType=VARCHAR}, #{attrValue3,jdbcType=VARCHAR}, #{salePrice,jdbcType=DECIMAL}, 
+      #{stockNum,jdbcType=INTEGER}, #{editTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.product.productproj.ItemDO" useGeneratedKeys="true">
+    insert into item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="itemId != null">
+        item_id,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="brand != null">
+        brand,
+      </if>
+      <if test="level1CatName != null">
+        level_1_cat_name,
+      </if>
+      <if test="level2CatName != null">
+        level_2_cat_name,
+      </if>
+      <if test="level3CatName != null">
+        level_3_cat_name,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="skuId != null">
+        sku_id,
+      </if>
+      <if test="attrName1 != null">
+        attr_name_1,
+      </if>
+      <if test="attrValue1 != null">
+        attr_value_1,
+      </if>
+      <if test="attrName2 != null">
+        attr_name_2,
+      </if>
+      <if test="attrValue2 != null">
+        attr_value_2,
+      </if>
+      <if test="attrName3 != null">
+        attr_name_3,
+      </if>
+      <if test="attrValue3 != null">
+        attr_value_3,
+      </if>
+      <if test="salePrice != null">
+        sale_price,
+      </if>
+      <if test="stockNum != null">
+        stock_num,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="itemId != null">
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null">
+        #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="level1CatName != null">
+        #{level1CatName,jdbcType=VARCHAR},
+      </if>
+      <if test="level2CatName != null">
+        #{level2CatName,jdbcType=VARCHAR},
+      </if>
+      <if test="level3CatName != null">
+        #{level3CatName,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="skuId != null">
+        #{skuId,jdbcType=INTEGER},
+      </if>
+      <if test="attrName1 != null">
+        #{attrName1,jdbcType=VARCHAR},
+      </if>
+      <if test="attrValue1 != null">
+        #{attrValue1,jdbcType=VARCHAR},
+      </if>
+      <if test="attrName2 != null">
+        #{attrName2,jdbcType=VARCHAR},
+      </if>
+      <if test="attrValue2 != null">
+        #{attrValue2,jdbcType=VARCHAR},
+      </if>
+      <if test="attrName3 != null">
+        #{attrName3,jdbcType=VARCHAR},
+      </if>
+      <if test="attrValue3 != null">
+        #{attrValue3,jdbcType=VARCHAR},
+      </if>
+      <if test="salePrice != null">
+        #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="stockNum != null">
+        #{stockNum,jdbcType=INTEGER},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.product.productproj.ItemDO">
+    update item
+    <set>
+      <if test="itemId != null">
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null">
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="level1CatName != null">
+        level_1_cat_name = #{level1CatName,jdbcType=VARCHAR},
+      </if>
+      <if test="level2CatName != null">
+        level_2_cat_name = #{level2CatName,jdbcType=VARCHAR},
+      </if>
+      <if test="level3CatName != null">
+        level_3_cat_name = #{level3CatName,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="skuId != null">
+        sku_id = #{skuId,jdbcType=INTEGER},
+      </if>
+      <if test="attrName1 != null">
+        attr_name_1 = #{attrName1,jdbcType=VARCHAR},
+      </if>
+      <if test="attrValue1 != null">
+        attr_value_1 = #{attrValue1,jdbcType=VARCHAR},
+      </if>
+      <if test="attrName2 != null">
+        attr_name_2 = #{attrName2,jdbcType=VARCHAR},
+      </if>
+      <if test="attrValue2 != null">
+        attr_value_2 = #{attrValue2,jdbcType=VARCHAR},
+      </if>
+      <if test="attrName3 != null">
+        attr_name_3 = #{attrName3,jdbcType=VARCHAR},
+      </if>
+      <if test="attrValue3 != null">
+        attr_value_3 = #{attrValue3,jdbcType=VARCHAR},
+      </if>
+      <if test="salePrice != null">
+        sale_price = #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="stockNum != null">
+        stock_num = #{stockNum,jdbcType=INTEGER},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.product.productproj.ItemDO">
+    update item
+    set item_id = #{itemId,jdbcType=INTEGER},
+      `status` = #{status,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      level_1_cat_name = #{level1CatName,jdbcType=VARCHAR},
+      level_2_cat_name = #{level2CatName,jdbcType=VARCHAR},
+      level_3_cat_name = #{level3CatName,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      sku_id = #{skuId,jdbcType=INTEGER},
+      attr_name_1 = #{attrName1,jdbcType=VARCHAR},
+      attr_value_1 = #{attrValue1,jdbcType=VARCHAR},
+      attr_name_2 = #{attrName2,jdbcType=VARCHAR},
+      attr_value_2 = #{attrValue2,jdbcType=VARCHAR},
+      attr_name_3 = #{attrName3,jdbcType=VARCHAR},
+      attr_value_3 = #{attrValue3,jdbcType=VARCHAR},
+      sale_price = #{salePrice,jdbcType=DECIMAL},
+      stock_num = #{stockNum,jdbcType=INTEGER},
+      edit_time = #{editTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
