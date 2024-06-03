@@ -25,6 +25,10 @@ public class ProductServiceImpl implements ProductService{
 
     @Autowired
     private ItemDao itemDAO;
+    //使用
+    @Autowired
+    private Cache<String,Object> guavaCache;
+
 
     @Override
     public void query() {

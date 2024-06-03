@@ -3,10 +3,12 @@ package com.product.productproj;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
 
+@Configuration
 public class GuavaCacheConfig {
 
     private Cache<String,Object> commonCache=null;
