@@ -21,6 +21,8 @@ public class CircuitAop {
 
     }
 
+
+    //proceed（）三次调用条件不同，不会同时触发，目的是调用目标方法
     @Around("point()")
     public Object limit(ProceedingJoinPoint proceedingJoinPoint) {
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
@@ -65,7 +67,6 @@ public class CircuitAop {
             }
 
         }
-
 
         try {
             return proceedingJoinPoint.proceed();

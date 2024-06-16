@@ -8,10 +8,11 @@ import java.util.Random;
 
 @RestController
 public class CircuitController {
-    @CircuitConfig(timeout = 100L,failCount = -1)
+    @CircuitConfig(timeout = 100L,failCount = 3)
     @PostMapping(value = "/test")
     public void test(){
         try {
+            System.out.println( "===========================invoke");
             Random random = new Random();
             int time = random.nextInt(200);
             System.out.println(time + "ms");
